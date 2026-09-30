@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>tinyNature — Scene 01</title>
+  <link rel="stylesheet" href="./src/styles.css">
+  <style>
+    .scene-transport { position: fixed; z-index: 200; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(560px, calc(100vw - 32px)); display: grid; grid-template-columns: auto 1fr; gap: 12px 18px; align-items: center; padding: 14px 18px; color: var(--ink); background: rgba(255,255,255,.94); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 32px rgba(32,37,50,.12); font: 13px/1.4 var(--type); }
+    .scene-transport button { grid-row: span 2; border: 0; border-radius: 6px; padding: 10px 16px; background: var(--ink); color: white; font: inherit; cursor: pointer; }
+    .scene-transport label { display: flex; justify-content: space-between; gap: 12px; }
+    .scene-transport input { width: 100%; margin: 0; accent-color: var(--accent); }
+    @media (max-width: 480px) { .scene-transport { bottom: 12px; padding: 10px 12px; gap: 8px 12px; } }
+  </style>
+</head>
+<body>
+  <main id="film" aria-label="tinyNature storyboard scene 01">
+    <div id="scene-root"></div>
+    <svg id="handoff-dot" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12"></circle></svg>
+  </main>
+  <section class="scene-transport" aria-label="Scene playback controls">
+    <button id="play" type="button" aria-label="Play scene">Play</button>
+    <label for="frame-slider">Scene 01 <span>Frame <output id="frame-value">450</output> / 450</span></label>
+    <input id="frame-slider" type="range" min="0" max="450" step="1" value="450" aria-label="Seek scene frame">
+  </section>
+  <script type="module">
+    import { gsap } from 'gsap';
+    import { TOKENS, SCENES, DOT_KNOTS } from './src/tokens.js';
+    import { mount } from './src/scenes/scene-01.js';
+
+    const film = document.querySelector('#film');
+    const root = document.querySelector('#scene-root');
+    const dot = document.querySelector('#handoff-dot');
+    const slider = document.querySelector('#frame-slider');
+    const readout = document.querySelector('#frame-value');
+    const play = document.querySelector('#play');
+    const spec = SCENES[0];
+    const fit = () => film.style.setProperty('--fit', String(Math.min(innerWidth / TOKENS.width, innerHeight / TOKENS.height)));
+    fit();
+    addEventListener('resize', fit, { passive: true });
+    const scene = mount();
+    scene.style.opacity = '1';
+    scene.style.visibility = 'visible';
+    scene.setAttribute('aria-hidden', 'false');
+    root.append(scene);
+    dot.style.left = `${DOT_KNOTS[0].x}px`;
+    dot.style.top = `${DOT_KNOTS[0].y}px`;
+
+    const timeline = gsap.timeline({ paused: true, smoothChildTiming: false });
+    mount.animate(timeline, scene, 0, spec.duration);
+    window.seekToFrame = (frame) => {
+      const value = Math.max(0, Math.min(450, Number(frame) || 0));
+      const time = (value / 450) * spec.duration;
+      timeline.time(time, false);
+      readout.value = String(Math.round(value));
+      return time;
+    };
+    slider.addEventListener('input', () => {
+      if (playing) { cancelAnimationFrame(raf); playing = false; play.textContent = 'Play'; }
+      window.seekToFrame(slider.value);
+    });
+    let playing = false;
+    let raf = 0;
+    let origin = 450;
+    let epoch = 0;
+    const tick = (now) => {
+      const frame = origin + (now - epoch) * 450 / (spec.duration * 1000);
+      if (frame >= 450) {
+        slider.value = '450'; window.seekToFrame(450); playing = false; play.textContent = 'Replay'; return;
+      }
+      slider.value = String(Math.floor(frame));
+      window.seekToFrame(frame);
+      raf = requestAnimationFrame(tick);
+    };
+    play.addEventListener('click', () => {
+      if (playing) {
+        cancelAnimationFrame(raf); playing = false; origin = Number(slider.value); play.textContent = 'Play'; return;
+      }
+      if (Number(slider.value) >= 450) { slider.value = '0'; window.seekToFrame(0); }
+      origin = Number(slider.value); epoch = performance.now(); playing = true; play.textContent = 'Pause'; raf = requestAnimationFrame(tick);
+    });
+    window.seekToFrame(450);
+  </script>
+</body>
+</html>
