@@ -40,11 +40,13 @@ function pointAt(time) {
   const h00 = 2*u*u*u - 3*u*u + 1, h10 = u*u*u - 2*u*u + u;
   const h01 = -2*u*u*u + 3*u*u, h11 = u*u*u - u*u;
   const p = {};
-  for (const key of ['x', 'y']) p[key] = h00*a[key] + h10*span*tangent(key, i) + h01*b[key] + h11*span*tangent(key, i+1);
+  for (const key of ['x', 'y']) p[key] = h00*a[key] + h10*span*tangent(key, i) + h01*b[key] + h11*span*tangent(key, i + 1);
   return p;
 }
+const dotTimeOffset = isolated ? 0 : DOT_KNOTS[1].time;
 const placeDot = (time) => {
-  const p = pointAt(time);
+  const pathTime = Math.min(DOT_KNOTS[DOT_KNOTS.length - 1].time, time + dotTimeOffset);
+  const p = pointAt(pathTime);
   dot.style.left = `${p.x}px`;
   dot.style.top = `${p.y}px`;
 };
@@ -56,8 +58,15 @@ for (const spec of specs) {
   root.append(element);
   const start = isolated ? 0 : spec.start;
   const end = start + spec.duration;
-  timeline.set(element, { autoAlpha: 0 }, start);
-  timeline.to(element, { autoAlpha: 1, duration: Math.min(0.14, spec.duration / 8), ease: 'none' }, start);
+  const finishedMasterIntro = !isolated && spec.id === 1;
+  if (finishedMasterIntro) {
+    // The master opens on the completed, visible title-card composition.
+    // Its scene-local motion may begin after t=0, but the opening frame never fades in.
+    timeline.set(element, { autoAlpha: 1 }, start);
+  } else {
+    timeline.set(element, { autoAlpha: 0 }, start);
+    timeline.to(element, { autoAlpha: 1, duration: Math.min(0.14, spec.duration / 8), ease: 'none' }, start);
+  }
   modules[spec.id - 1].animate(timeline, element, start, spec.duration);
   if (spec.id < 7) timeline.to(element, { autoAlpha: 0, duration: 0.14, ease: 'none' }, end - 0.14);
 }
@@ -66,13 +75,12 @@ if (isolated) {
   dot.style.left = `${knot.x}px`;
   dot.style.top = `${knot.y}px`;
 } else {
+  // Dot placement is computed directly from the requested timeline time in seek().
   placeDot(0);
-  const clock = { time: 0 };
-  timeline.to(clock, { time: 15, duration: 15, ease: 'none', onUpdate: () => placeDot(clock.time) }, 0);
 }
 const duration = isolated ? SCENES[sceneId - 1].duration : 15;
 timeline.pause(0);
-placeDot(isolated ? 0 : 0);
+placeDot(0);
 gsap.ticker.sleep();
 window.__film = Object.freeze({
   duration,
