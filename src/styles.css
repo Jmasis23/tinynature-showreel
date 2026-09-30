@@ -1,0 +1,70 @@
+:root {
+  --ink: #202532;
+  --secondary: #667085;
+  --tertiary: #98A1B2;
+  --accent: #3559A8;
+  --accent-soft: #EDF2FC;
+  --line: #E8EBF0;
+  --canvas: #F7F8FA;
+  --type: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-synthesis: none; text-rendering: geometricPrecision; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--canvas); }
+body { font-family: var(--type); color: var(--ink); }
+#film { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; overflow: hidden; transform: translate(-50%,-50%) scale(var(--fit,1)); transform-origin: center; background: var(--canvas); isolation: isolate; }
+#scene-root, .scene { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+.scene { overflow: hidden; opacity: 0; visibility: hidden; }
+#handoff-dot { position: absolute; z-index: 100; left: 0; top: 0; width: 24px; height: 24px; overflow: visible; pointer-events: none; }
+#handoff-dot circle { fill: var(--accent); }
+.wordmark { color: var(--ink); font-weight: 600; letter-spacing: -.085em; line-height: .86; white-space: nowrap; }
+.s1 { background: var(--accent-soft); }
+.s1-rule { position: absolute; width: 1220px; height: 1px; left: 350px; top: 698px; background: rgba(32,37,50,.2); transform-origin: left center; }
+.s1-word { position: absolute; left: 290px; top: 356px; font-size: 220px; }
+.s1-caption { position: absolute; left: 294px; top: 733px; font-size: 22px; font-weight: 500; letter-spacing: .17em; color: var(--accent); }
+.s2 { background: var(--canvas); }
+.s2-wash { position: absolute; inset: 0; background: var(--accent-soft); clip-path: polygon(0 0,100% 0,100% 23%,0 37%); }
+.s2-word { position: absolute; left: -94px; top: 276px; font-size: 620px; letter-spacing: -.11em; transform-origin: 50% 50%; }
+.s2-rule-a, .s2-rule-b { position: absolute; height: 2px; background: var(--line); left: 0; right: 0; transform-origin: left; }
+.s2-rule-a { top: 240px; } .s2-rule-b { top: 828px; }
+.s2-select { position: absolute; left: 1160px; top: 326px; width: 348px; height: 340px; border: 2px solid var(--accent); }
+.s2-select::before, .s2-select::after { content: ''; position: absolute; background: var(--accent); }
+.s2-select::before { width: 18px; height: 2px; left: -10px; top: 50%; }
+.s2-select::after { width: 2px; height: 18px; left: 50%; top: -10px; }
+.s2-fragments { position: absolute; left: 165px; top: 450px; width: 1590px; height: 1px; background: var(--ink); transform-origin: center; }
+.s3 { background: var(--canvas); }
+.s3-wash { position: absolute; left: 0; top: 0; width: 100%; height: 380px; background: var(--accent-soft); }
+.s3-grid { position: absolute; left: 220px; top: 192px; width: 1480px; height: 690px; display: grid; grid-template-columns: 1fr 1.2fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; }
+.s3-cell { position: relative; display: grid; place-items: center; border: 1px solid var(--line); background: rgba(255,255,255,.72); overflow: hidden; }
+.s3-cell:nth-child(2), .s3-cell:nth-child(5) { background: var(--accent-soft); }
+.s3-glyph { width: 180px; height: 180px; fill: none; stroke: var(--ink); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
+.s3-cell:nth-child(3) .s3-glyph { width: 115px; height: 115px; stroke: var(--tertiary); }
+.s3-cell:nth-child(5) .s3-glyph { stroke: var(--accent); stroke-width: 16; }
+.s3-selected { position: absolute; left: 746px; top: 194px; width: 526px; height: 326px; border: 2px solid var(--accent); pointer-events: none; }
+.s3-rail { position: absolute; left: 220px; right: 220px; bottom: 128px; height: 1px; background: var(--line); }
+.s4 { background: var(--accent-soft); }
+.s4-letter { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-51%); font-size: 1610px; line-height: .78; font-weight: 700; letter-spacing: -.12em; color: var(--ink); }
+.s4-stroke { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: visible; }
+.s4-stroke path { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; }
+.s5 { background: var(--canvas); }
+.s5-outline { position: absolute; left: 264px; top: 176px; width: 1392px; height: 728px; border: 1px solid var(--line); border-radius: 42px; background: rgba(255,255,255,.54); }
+.s5-rail { position: absolute; left: 410px; top: 538px; width: 1100px; height: 1px; background: var(--line); }
+.s5-letters { position: absolute; left: 50%; top: 50%; display: flex; align-items: center; transform: translate(-50%,-50%); font-size: 208px; font-weight: 600; letter-spacing: -.08em; color: var(--ink); white-space: nowrap; }
+.s5-letters span { display: inline-block; position: relative; }
+.s5-accent { position: absolute; left: 50%; top: calc(50% + 170px); transform: translateX(-50%); width: 86px; height: 3px; background: var(--accent); }
+.s6 { background: var(--accent-soft); perspective: 1400px; }
+.s6-panel { position: absolute; top: 170px; width: 805px; height: 740px; background: var(--canvas); border: 1px solid rgba(32,37,50,.08); overflow: hidden; transform-origin: center; }
+.s6-panel.p1 { left: -80px; } .s6-panel.p2 { left: 428px; } .s6-panel.p3 { left: 936px; } .s6-panel.p4 { left: 1444px; }
+.s6-type { position: absolute; left: 54px; top: 278px; font-size: 190px; }
+.s6-panel.p1 .s6-type { left: -210px; top: 352px; font-size: 280px; }
+.s6-panel.p2 .s6-type { top: 294px; font-size: 174px; }
+.s6-panel.p3 .s6-type { left: -124px; top: 346px; font-size: 248px; }
+.s6-panel.p4 .s6-type { left: 80px; top: 390px; font-size: 152px; }
+.s6-lead { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.82); font-size: 324px; opacity: 0; }
+.s7 { background: var(--canvas); }
+.s7-wash { position: absolute; inset: 0; background: linear-gradient(118deg,var(--accent-soft) 0%,rgba(237,242,252,0) 60%); }
+.s7-rule { position: absolute; left: 304px; top: 602px; width: 1312px; height: 1px; background: var(--line); transform-origin: left; }
+.s7-word { position: absolute; left: 294px; top: 356px; font-size: 216px; }
+.s7-design { position: absolute; left: 306px; top: 290px; color: var(--accent); font-size: 18px; font-weight: 600; letter-spacing: .22em; }
+.s7-handle { position: absolute; left: 306px; top: 664px; color: var(--secondary); font-size: 34px; font-weight: 400; letter-spacing: -.025em; }
+.s7-status { position: absolute; left: 306px; top: 734px; color: var(--ink); font-size: 36px; font-weight: 500; letter-spacing: -.035em; }
